@@ -1,4 +1,0 @@
-{
-    "extension-name.php"                   	: "{%= slug %}.php",
-    "languages/extension-name.pot"         	: "languages/{%= slug %}.pot"
-}

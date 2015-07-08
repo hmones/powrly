@@ -39,6 +39,7 @@
  * @var array
  * @global array $shortcode_tags
  */
+// include '..\wp-content\plugins\anspress-question-answer\includes\subscriber.php';
 $shortcode_tags = array();
 
 /**
