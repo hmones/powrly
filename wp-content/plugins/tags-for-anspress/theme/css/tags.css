@@ -1,0 +1,140 @@
+#anspress .ap-term-tag-box {
+  list-style: none;
+  padding: 0;
+  margin: 0 -15px;
+}
+#anspress .ap-term-tag-box > li {
+  border-bottom: 1px dashed #e4e4e4;
+  float: left;
+  margin: 0 0 20px;
+  padding: 0 0 10px;
+  width: 25%;
+}
+#anspress .ap-term-tag-box > li .ap-tags-item {
+  padding: 0 15px;
+}
+#anspress .ap-term-tag-box > li .ap-term-count {
+  color: #888888;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 28px;
+  text-align: right;
+}
+#anspress .ap-term-tag-box > li .term-title {
+  background: none repeat scroll 0 0 padding-box #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  color: #333;
+  margin-right: 10px;
+  padding: 3px 12px;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+#anspress .ap-term-tag-box > li .ap-taxo-description {
+  color: #888888;
+  font-size: 12px;
+  height: 65px;
+  line-height: 21px;
+  margin-top: 15px;
+  overflow: hidden;
+}
+#anspress .sub-taxo-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+#anspress .ap-sub-taxo {
+  margin-bottom: 30px;
+}
+#anspress .ap-sub-taxo li {
+  margin: 0 10px 15px 0;
+  min-width: 145px;
+}
+#anspress .ap-sub-taxo li a {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  -webkit-border-radius: 2px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 2px;
+  -moz-background-clip: padding;
+  border-radius: 2px;
+  background-clip: padding-box;
+  color: #888888;
+  display: block;
+  font-size: 15px;
+  padding: 7px 12px;
+  text-decoration: none;
+}
+#anspress .ap-sub-taxo li a span {
+  float: right;
+}
+#anspress .ap-sub-taxo li a:hover {
+  border-color: #11a7db;
+}
+#anspress .ap-taxo-detail {
+  background: none repeat scroll 0 0 #f8f8f8;
+  -webkit-border-radius: 5px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 5px;
+  -moz-background-clip: padding;
+  border-radius: 5px;
+  background-clip: padding-box;
+  margin-bottom: 25px;
+  padding: 15px 20px;
+}
+#anspress .ap-taxo-detail .ap-tax-item-count {
+  background: #11a7db;
+  color: #ffffff;
+  float: right;
+  font-size: 17px;
+  padding: 5px 10px;
+  -webkit-border-radius: 2px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 2px;
+  -moz-background-clip: padding;
+  border-radius: 2px;
+  background-clip: padding-box;
+}
+#anspress .ap-taxo-detail .ap-taxo-description {
+  line-height: 28px;
+}
+#anspress .ap-taxo-detail .ap-term-sub {
+  margin-top: 20px;
+}
+#anspress .ap-taxo-detail .ap-sub-taxo {
+  margin: 0;
+}
+#anspress .ap-tag-suggestions {
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 4px;
+  -moz-background-clip: padding;
+  border-radius: 4px;
+  background-clip: padding-box;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+  list-style: outside none none;
+  margin: 0;
+  position: absolute;
+  padding: 5px;
+  width: 150px;
+}
+#anspress .ap-tag-suggestions a {
+  display: block;
+  padding: 6px 15px;
+  -webkit-border-radius: 2px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 2px;
+  -moz-background-clip: padding;
+  border-radius: 2px;
+  background-clip: padding-box;
+}
+#anspress .ap-tag-suggestions a:hover {
+  text-decoration: none;
+  background: #11a7db;
+  color: #ffffff;
+}
