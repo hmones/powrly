@@ -156,46 +156,19 @@
 	Container = api.Class.extend({
 		defaultActiveArguments: { duration: 'fast', completeCallback: $.noop },
 		defaultExpandedArguments: { duration: 'fast', completeCallback: $.noop },
-		containerType: 'container',
-		defaults: {
-			title: '',
-			description: '',
-			priority: 100,
-			type: 'default',
-			content: null,
-			active: true,
-			instanceNumber: null
-		},
 
 		/**
 		 * @since 4.1.0
 		 *
-		 * @param {string}         id - The ID for the container.
-		 * @param {object}         options - Object containing one property: params.
-		 * @param {object}         options.params - Object containing the following properties.
-		 * @param {string}         options.params.title - Title shown when panel is collapsed and expanded.
-		 * @param {string=}        [options.params.description] - Description shown at the top of the panel.
-		 * @param {number=100}     [options.params.priority] - The sort priority for the panel.
-		 * @param {string=default} [options.params.type] - The type of the panel. See wp.customize.panelConstructor.
-		 * @param {string=}        [options.params.content] - The markup to be used for the panel container. If empty, a JS template is used.
-		 * @param {boolean=true}   [options.params.active] - Whether the panel is active or not.
+		 * @param {String} id
+		 * @param {Object} options
 		 */
 		initialize: function ( id, options ) {
 			var container = this;
 			container.id = id;
-			options = options || {};
-
-			options.params = _.defaults(
-				options.params || {},
-				container.defaults
-			);
-
-			$.extend( container, options );
-			container.templateSelector = 'customize-' + container.containerType + '-' + container.params.type;
+			container.params = {};
+			$.extend( container, options || {} );
 			container.container = $( container.params.content );
-			if ( 0 === container.container.length ) {
-				container.container = $( container.getContainer() );
-			}
 
 			container.deferred = {
 				embedded: new $.Deferred()
@@ -218,13 +191,11 @@
 				container.onChangeExpanded( expanded, args );
 			});
 
-			container.deferred.embedded.done( function () {
-				container.attachEvents();
-			});
+			container.attachEvents();
 
 			api.utils.bubbleChildValueChanges( container, [ 'priority', 'active' ] );
 
-			container.priority.set( container.params.priority );
+			container.priority.set( isNaN( container.params.priority ) ? 100 : container.params.priority );
 			container.active.set( container.params.active );
 			container.expanded.set( false );
 		},
@@ -284,27 +255,17 @@
 		 * @param {Object}  args.completeCallback
 		 */
 		onChangeActive: function ( active, args ) {
-			var duration, construct = this;
-			duration = ( 'resolved' === api.previewer.deferred.active.state() ? args.duration : 0 );
-			if ( ! $.contains( document, construct.container[0] ) ) {
+			var duration = ( 'resolved' === api.previewer.deferred.active.state() ? args.duration : 0 );
+			if ( ! $.contains( document, this.container ) ) {
 				// jQuery.fn.slideUp is not hiding an element if it is not in the DOM
-				construct.container.toggle( active );
+				this.container.toggle( active );
 				if ( args.completeCallback ) {
 					args.completeCallback();
 				}
 			} else if ( active ) {
-				construct.container.stop( true, true ).slideDown( duration, args.completeCallback );
+				this.container.stop( true, true ).slideDown( duration, args.completeCallback );
 			} else {
-				if ( construct.expanded() ) {
-					construct.collapse({
-						duration: duration,
-						completeCallback: function() {
-							construct.container.stop( true, true ).slideUp( duration, args.completeCallback );
-						}
-					});
-				} else {
-					construct.container.stop( true, true ).slideUp( duration, args.completeCallback );
-				}
+				this.container.stop( true, true ).slideUp( duration, args.completeCallback );
 			}
 		},
 
@@ -405,28 +366,7 @@
 		 * Bring the container into view and then expand this and bring it into view
 		 * @param {Object} [params]
 		 */
-		focus: focus,
-
-		/**
-		 * Return the container html, generated from its JS template, if it exists.
-		 *
-		 * @since 4.3.0
-		 */
-		getContainer: function () {
-			var template,
-				container = this;
-
-			if ( 0 !== $( '#tmpl-' + container.templateSelector ).length ) {
-				template = wp.template( container.templateSelector );
-			} else {
-				template = wp.template( 'customize-' + container.containerType + '-default' );
-			}
-			if ( template && container.container ) {
-				return $.trim( template( container.params ) );
-			}
-
-			return '<li></li>';
-		}
+		focus: focus
 	});
 
 	/**
@@ -436,33 +376,12 @@
 	 * @augments wp.customize.Class
 	 */
 	api.Section = Container.extend({
-		containerType: 'section',
-		defaults: {
-			title: '',
-			description: '',
-			priority: 100,
-			type: 'default',
-			content: null,
-			active: true,
-			instanceNumber: null,
-			panel: null,
-			customizeAction: ''
-		},
 
 		/**
 		 * @since 4.1.0
 		 *
-		 * @param {string}         id - The ID for the section.
-		 * @param {object}         options - Object containing one property: params.
-		 * @param {object}         options.params - Object containing the following properties.
-		 * @param {string}         options.params.title - Title shown when section is collapsed and expanded.
-		 * @param {string=}        [options.params.description] - Description shown at the top of the section.
-		 * @param {number=100}     [options.params.priority] - The sort priority for the section.
-		 * @param {string=default} [options.params.type] - The type of the section. See wp.customize.sectionConstructor.
-		 * @param {string=}        [options.params.content] - The markup to be used for the section container. If empty, a JS template is used.
-		 * @param {boolean=true}   [options.params.active] - Whether the section is active or not.
-		 * @param {string}         options.params.panel - The ID for the panel this section is associated with.
-		 * @param {string=}        [options.params.customizeAction] - Additional context information shown before the section title when expanded.
+		 * @param {String} id
+		 * @param {Array}  options
 		 */
 		initialize: function ( id, options ) {
 			var section = this;
@@ -527,7 +446,7 @@
 			var section = this;
 
 			// Expand/Collapse accordion sections on click.
-			section.container.find( '.accordion-section-title, .customize-section-back' ).on( 'click keydown', function( event ) {
+			section.container.find( '.accordion-section-title' ).on( 'click keydown', function( event ) {
 				if ( api.utils.isKeydownButNotEnterEvent( event ) ) {
 					return;
 				}
@@ -580,33 +499,18 @@
 		 * @param {Object}  args
 		 */
 		onChangeExpanded: function ( expanded, args ) {
-			var position, scroll, section = this,
-				container = section.container.closest( '.wp-full-overlay-sidebar-content' ),
+			var section = this,
 				content = section.container.find( '.accordion-section-content' ),
-				overlay = section.container.closest( '.wp-full-overlay' ),
-				backBtn = section.container.find( '.customize-section-back' ),
-				sectionTitle = section.container.find( '.accordion-section-title' ).first(),
 				expand;
 
-			if ( expanded && ! section.container.hasClass( 'open' ) ) {
+			if ( expanded ) {
 
 				if ( args.unchanged ) {
 					expand = args.completeCallback;
 				} else {
-					container.scrollTop( 0 );
 					expand = function () {
+						content.stop().slideDown( args.duration, args.completeCallback );
 						section.container.addClass( 'open' );
-						overlay.addClass( 'section-open' );
-						position = content.offset().top;
-						scroll = container.scrollTop();
-						content.css( 'margin-top', ( 45 - position - scroll ) );
-						content.css( 'height', ( window.innerHeight - 90 ) );
-						sectionTitle.attr( 'tabindex', '-1' );
-						backBtn.attr( 'tabindex', '0' );
-						backBtn.focus();
-						if ( args.completeCallback ) {
-							args.completeCallback();
-						}
 					};
 				}
 
@@ -627,21 +531,9 @@
 					expand();
 				}
 
-			} else if ( ! expanded && section.container.hasClass( 'open' ) ) {
-				section.container.removeClass( 'open' );
-				overlay.removeClass( 'section-open' );
-				content.css( 'margin-top', 'inherit' );
-				container.scrollTop( 0 );
-				backBtn.attr( 'tabindex', '-1' );
-				sectionTitle.attr( 'tabindex', '0' );
-				sectionTitle.focus();
-				if ( args.completeCallback ) {
-					args.completeCallback();
-				}
 			} else {
-				if ( args.completeCallback ) {
-					args.completeCallback();
-				}
+				section.container.removeClass( 'open' );
+				content.slideUp( args.duration, args.completeCallback );
 			}
 		}
 	});
@@ -826,6 +718,7 @@
 				overlay = section.closest( '.wp-full-overlay' ),
 				container = section.closest( '.wp-full-overlay-sidebar-content' ),
 				siblings = container.find( '.open' ),
+				topPanel = overlay.find( '#customize-theme-controls > ul > .accordion-section > .accordion-section-title' ).add( '#customize-info > .accordion-section-title' ),
 				customizeBtn = section.find( '.customize-theme' ),
 				changeBtn = section.find( '.change-theme' ),
 				content = section.find( '.control-panel-content' );
@@ -855,6 +748,8 @@
 						args.completeCallback();
 					}
 				} );
+				topPanel.attr( 'tabindex', '-1' );
+				changeBtn.attr( 'tabindex', '-1' );
 				customizeBtn.focus();
 			} else {
 				siblings.removeClass( 'open' );
@@ -867,6 +762,7 @@
 						args.completeCallback();
 					}
 				} );
+				topPanel.attr( 'tabindex', '0' );
 				customizeBtn.attr( 'tabindex', '0' );
 				changeBtn.focus();
 				container.scrollTop( 0 );
@@ -1068,20 +964,11 @@
 	 * @augments wp.customize.Class
 	 */
 	api.Panel = Container.extend({
-		containerType: 'panel',
-
 		/**
 		 * @since 4.1.0
 		 *
-		 * @param {string}         id - The ID for the panel.
-		 * @param {object}         options - Object containing one property: params.
-		 * @param {object}         options.params - Object containing the following properties.
-		 * @param {string}         options.params.title - Title shown when panel is collapsed and expanded.
-		 * @param {string=}        [options.params.description] - Description shown at the top of the panel.
-		 * @param {number=100}     [options.params.priority] - The sort priority for the panel.
-		 * @param {string=default} [options.params.type] - The type of the panel. See wp.customize.panelConstructor.
-		 * @param {string=}        [options.params.content] - The markup to be used for the panel container. If empty, a JS template is used.
-		 * @param {boolean=true}   [options.params.active] - Whether the panel is active or not.
+		 * @param  {String} id
+		 * @param  {Object} options
 		 */
 		initialize: function ( id, options ) {
 			var panel = this;
@@ -1103,7 +990,6 @@
 
 			if ( ! panel.container.parent().is( parentContainer ) ) {
 				parentContainer.append( panel.container );
-				panel.renderContent();
 			}
 			panel.deferred.embedded.resolve();
 		},
@@ -1126,40 +1012,25 @@
 				}
 			});
 
-			// Close panel.
-			panel.container.find( '.customize-panel-back' ).on( 'click keydown', function( event ) {
-				if ( api.utils.isKeydownButNotEnterEvent( event ) ) {
-					return;
-				}
-				event.preventDefault(); // Keep this AFTER the key filter above
-
-				if ( panel.expanded() ) {
-					panel.collapse();
-				}
-			});
-
 			meta = panel.container.find( '.panel-meta:first' );
 
-			meta.find( '> .accordion-section-title .customize-help-toggle' ).on( 'click keydown', function( event ) {
+			meta.find( '> .accordion-section-title' ).on( 'click keydown', function( event ) {
 				if ( api.utils.isKeydownButNotEnterEvent( event ) ) {
 					return;
 				}
 				event.preventDefault(); // Keep this AFTER the key filter above
 
-				meta = panel.container.find( '.panel-meta' );
 				if ( meta.hasClass( 'cannot-expand' ) ) {
 					return;
 				}
 
-				var content = meta.find( '.customize-panel-description:first' );
+				var content = meta.find( '.accordion-section-content:first' );
 				if ( meta.hasClass( 'open' ) ) {
 					meta.toggleClass( 'open' );
 					content.slideUp( panel.defaultExpandedArguments.duration );
-					$( this ).attr( 'aria-expanded', false );
 				} else {
 					content.slideDown( panel.defaultExpandedArguments.duration );
 					meta.toggleClass( 'open' );
-					$( this ).attr( 'aria-expanded', true );
 				}
 			});
 
@@ -1218,12 +1089,12 @@
 			// Note: there is a second argument 'args' passed
 			var position, scroll,
 				panel = this,
-				section = panel.container.closest( '.accordion-section' ), // This is actually the panel.
+				section = panel.container.closest( '.accordion-section' ),
 				overlay = section.closest( '.wp-full-overlay' ),
 				container = section.closest( '.wp-full-overlay-sidebar-content' ),
 				siblings = container.find( '.open' ),
-				topPanel = overlay.find( '#customize-theme-controls > ul > .accordion-section > .accordion-section-title' ),
-				backBtn = section.find( '.customize-panel-back' ),
+				topPanel = overlay.find( '#customize-theme-controls > ul > .accordion-section > .accordion-section-title' ).add( '#customize-info > .accordion-section-title' ),
+				backBtn = overlay.find( '.control-panel-back' ),
 				panelTitle = section.find( '.accordion-section-title' ).first(),
 				content = section.find( '.control-panel-content' );
 
@@ -1270,28 +1141,6 @@
 				backBtn.attr( 'tabindex', '-1' );
 				panelTitle.focus();
 				container.scrollTop( 0 );
-			}
-		},
-
-		/**
-		 * Render the panel from its JS template, if it exists.
-		 *
-		 * The panel's container must already exist in the DOM.
-		 *
-		 * @since 4.3.0
-		 */
-		renderContent: function () {
-			var template,
-				panel = this;
-
-			// Add the content to the container.
-			if ( 0 !== $( '#tmpl-' + panel.templateSelector + '-content' ).length ) {
-				template = wp.template( panel.templateSelector + '-content' );
-			} else {
-				template = wp.template( 'customize-panel-default-content' );
-			}
-			if ( template && panel.container ) {
-				panel.container.find( '.accordion-sub-container' ).html( template( panel.params ) );
 			}
 		}
 	});
@@ -2724,7 +2573,7 @@
 		var parent, topFocus,
 			body = $( document.body ),
 			overlay = body.children( '.wp-full-overlay' ),
-			title = $( '#customize-info .panel-title.site-title' ),
+			title = $( '#customize-info .theme-name.site-title' ),
 			closeBtn = $( '.customize-controls-close' ),
 			saveBtn = $( '#save' );
 
@@ -2739,14 +2588,14 @@
 		});
 
 		// Expand/Collapse the main customizer customize info.
-		$( '.customize-info' ).find( '> .accordion-section-title .customize-help-toggle' ).on( 'click keydown', function( event ) {
+		$( '#customize-info' ).find( '> .accordion-section-title' ).on( 'click keydown', function( event ) {
 			if ( api.utils.isKeydownButNotEnterEvent( event ) ) {
 				return;
 			}
 			event.preventDefault(); // Keep this AFTER the key filter above
 
-			var section = $( this ).closest( '.accordion-section' ),
-				content = section.find( '.customize-panel-description:first' );
+			var section = $( this ).parent(),
+				content = section.find( '.accordion-section-content:first' );
 
 			if ( section.hasClass( 'cannot-expand' ) ) {
 				return;
@@ -2755,11 +2604,9 @@
 			if ( section.hasClass( 'open' ) ) {
 				section.toggleClass( 'open' );
 				content.slideUp( api.Panel.prototype.defaultExpandedArguments.duration );
-				$( this ).attr( 'aria-expanded', false );
 			} else {
 				content.slideDown( api.Panel.prototype.defaultExpandedArguments.duration );
 				section.toggleClass( 'open' );
-				$( this ).attr( 'aria-expanded', true );
 			}
 		});
 
@@ -3207,27 +3054,6 @@
 
 			control.setting.bind( function( to ) {
 				control.element.set( 'blank' !== to );
-			});
-		});
-
-		// Change previewed URL to the homepage when changing the page_on_front.
-		api( 'show_on_front', 'page_on_front', function( showOnFront, pageOnFront ) {
-			var updatePreviewUrl = function() {
-				if ( showOnFront() === 'page' && parseInt( pageOnFront(), 10 ) > 0 ) {
-					api.previewer.previewUrl.set( api.settings.url.home );
-				}
-			};
-			showOnFront.bind( updatePreviewUrl );
-			pageOnFront.bind( updatePreviewUrl );
-		});
-
-		// Change the previewed URL to the selected page when changing the page_for_posts.
-		api( 'page_for_posts', function( setting ) {
-			setting.bind(function( pageId ) {
-				pageId = parseInt( pageId, 10 );
-				if ( pageId > 0 ) {
-					api.previewer.previewUrl.set( api.settings.url.home + '?page_id=' + pageId );
-				}
 			});
 		});
 

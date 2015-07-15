@@ -467,8 +467,6 @@ if ( current_theme_supports( 'menus' ) ) {
 /*
  * Ensure the user will be able to scroll horizontally
  * by adding a class for the max menu depth.
- *
- * @global int $_wp_nav_menu_max_depth
  */
 global $_wp_nav_menu_max_depth;
 $_wp_nav_menu_max_depth = 0;
@@ -479,14 +477,7 @@ if ( is_nav_menu( $nav_menu_selected_id ) ) {
 	$edit_markup = wp_get_nav_menu_to_edit( $nav_menu_selected_id );
 }
 
-/**
- *
- * @global int $_wp_nav_menu_max_depth
- *
- * @param string $classes
- * @return string
- */
-function wp_nav_menu_max_depth( $classes ) {
+function wp_nav_menu_max_depth($classes) {
 	global $_wp_nav_menu_max_depth;
 	return "$classes menu-max-depth-$_wp_nav_menu_max_depth";
 }
@@ -558,27 +549,12 @@ get_current_screen()->set_help_sidebar(
 require_once( ABSPATH . 'wp-admin/admin-header.php' );
 ?>
 <div class="wrap">
-	<h1 class="nav-tab-wrapper">
+	<h2 class="nav-tab-wrapper">
 		<a href="<?php echo admin_url( 'nav-menus.php' ); ?>" class="nav-tab<?php if ( ! isset( $_GET['action'] ) || isset( $_GET['action'] ) && 'locations' != $_GET['action'] ) echo ' nav-tab-active'; ?>"><?php esc_html_e( 'Edit Menus' ); ?></a>
 		<?php if ( $num_locations && $menu_count ) : ?>
 			<a href="<?php echo esc_url( add_query_arg( array( 'action' => 'locations' ), admin_url( 'nav-menus.php' ) ) ); ?>" class="nav-tab<?php if ( $locations_screen ) echo ' nav-tab-active'; ?>"><?php esc_html_e( 'Manage Locations' ); ?></a>
 		<?php endif; ?>
-		<?php
-			if ( current_user_can( 'customize' ) ) {
-				printf(
-					' <a class="page-title-action hide-if-no-customize" href="%1$s">%2$s</a>',
-					esc_url( add_query_arg(
-						array(
-							array( 'autofocus' => array( 'panel' => 'nav_menus' ) ),
-							'return' => urlencode( wp_unslash( $_SERVER['REQUEST_URI'] ) )
-						),
-						admin_url( 'customize.php' )
-					) ),
-					__( 'Manage in Customizer' )
-				);
-			}
-		?>
-	</h1>
+	</h2>
 	<?php
 	foreach( $messages as $message ) :
 		echo $message . "\n";
@@ -727,7 +703,7 @@ require_once( ABSPATH . 'wp-admin/admin-header.php' );
 						<input type="hidden" name="zero-menu-state" value="true" />
 					<?php } ?>
  					<input type="hidden" name="action" value="update" />
-					<input type="hidden" name="menu" value="<?php echo esc_attr( $nav_menu_selected_id ); ?>" />
+					<input type="hidden" name="menu" id="menu" value="<?php echo esc_attr( $nav_menu_selected_id ); ?>" />
 					<div id="nav-menu-header">
 						<div class="major-publishing-actions">
 							<label class="menu-name-label howto open-label" for="menu-name">

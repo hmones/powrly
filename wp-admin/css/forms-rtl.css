@@ -401,11 +401,6 @@ input[type="number"].small-text {
 	color: #777;
 }
 
-button.wp-hide-pw > .dashicons {
-	position: relative;
-	top: 3px;
-}
-
 label,
 #your-profile label + a {
 	vertical-align: middle;
@@ -439,58 +434,32 @@ fieldset label,
 #pass-strength-result {
 	background-color: #eee;
 	border: 1px solid #ddd;
-	margin: -2px 1px 5px 5px;
+	float: right;
+	margin: 13px 1px 5px 5px;
 	padding: 3px 5px;
 	text-align: center;
-	width: 25em;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	opacity: 0;
+	width: 200px;
+	display: none;
 }
 
 #pass-strength-result.short {
-	opacity: 1;
 	background-color: #ffa0a0;
 	border-color: #f04040;
 }
 
 #pass-strength-result.bad {
-	opacity: 1;
 	background-color: #ffb78c;
 	border-color: #ff853c;
 }
 
 #pass-strength-result.good {
-	opacity: 1;
 	background-color: #ffec8b;
 	border-color: #fc0;
 }
 
 #pass-strength-result.strong {
-	opacity: 1;
 	background-color: #c3ff88;
 	border-color: #8dff1c;
-}
-
-#pass1.short {
-	border-color: #f04040;
-}
-
-#pass1.bad {
-	border-color: #ff853c;
-}
-
-#pass1.good {
-	border-color: #fc0;
-}
-
-#pass1.strong {
-	border-color: #8dff1c;
-}
-
-.pw-weak{
-	display:none;
 }
 
 .indicator-hint {
@@ -893,7 +862,6 @@ table.form-table td .updated p {
 
 .request-filesystem-credentials-dialog .notification-dialog {
 	top: 15%;
-	max-height: 85%;
 }
 
 .request-filesystem-credentials-dialog-content {
@@ -975,24 +943,16 @@ table.form-table td .updated p {
 		padding-top: 10px;
 	}
 
-	input[type="checkbox"],
-	.widefat th input[type="checkbox"],
-	.widefat thead td input[type="checkbox"],
-	.widefat tfoot td input[type="checkbox"] {
+	input[type="checkbox"], .widefat th input[type="checkbox"] {
 		-webkit-appearance: none;
 		padding: 10px;
 	}
 
-	.widefat th input[type="checkbox"],
-	.widefat thead td input[type="checkbox"],
-	.widefat tfoot td input[type="checkbox"] {
+	.widefat th input[type="checkbox"] {
 		margin-bottom: 8px;
 	}
 
-	input[type="checkbox"]:checked:before,
-	.widefat th input[type="checkbox"]:before,
-	.widefat thead td input[type="checkbox"]:before,
-	.widefat tfoot td input[type="checkbox"]:before {
+	input[type="checkbox"]:checked:before, .widefat th input[type="checkbox"]:before {
 		font: normal 30px/1 'Dashicons';
 		margin: -3px -5px;
 	}
@@ -1127,10 +1087,8 @@ table.form-table td .updated p {
 	}
 
 	.form-table span.description {
-		display: inline;
 		padding: 4px 0 0;
 		line-height: 1.4em;
-		font-size: 14px;
 	}
 
 	.form-table th {
@@ -1140,20 +1098,8 @@ table.form-table td .updated p {
 	}
 
 	.form-table td {
-		margin-bottom: 0;
-		padding-bottom: 6px;
-		padding-top: 4px;
+		padding-top: 8px;
 		padding-right: 0;
-	}
-
-	.form-table.permalink-structure td code {
-		margin-right: 32px;
-	}
-
-	.form-table.permalink-structure td input[type="text"] {
-		margin-right: 32px;
-		margin-top: 4px;
-		width: 96%;
 	}
 
 	.form-table input.regular-text {
@@ -1211,11 +1157,11 @@ table.form-table td .updated p {
 	.request-filesystem-credentials-dialog	.notification-dialog{
 		width: 100%;
 		height: 100%;
-		max-height: 100%;
 		position: fixed;
 		top: 0;
 		margin: 0;
 		right: 0;
+		overflow-y: auto;
 	}
 }
 

@@ -67,7 +67,7 @@ if ( isset( $_GET['action'] ) ) {
 		require_once( ABSPATH . 'wp-admin/admin-header.php' );
 		?>
 			<div class="wrap">
-				<h1><?php _e( 'Confirm your action' ); ?></h1>
+				<h2><?php _e( 'Confirm your action' ); ?></h2>
 				<form action="sites.php?action=<?php echo esc_attr( $_GET['action2'] ) ?>" method="post">
 					<input type="hidden" name="action" value="<?php echo esc_attr( $_GET['action2'] ) ?>" />
 					<input type="hidden" name="id" value="<?php echo esc_attr( $id ); ?>" />
@@ -248,16 +248,16 @@ require_once( ABSPATH . 'wp-admin/admin-header.php' );
 ?>
 
 <div class="wrap">
-<h1><?php _e( 'Sites' ); ?>
+<h2><?php _e( 'Sites' ) ?>
 
 <?php if ( current_user_can( 'create_sites') ) : ?>
-	<a href="<?php echo network_admin_url('site-new.php'); ?>" class="page-title-action"><?php echo esc_html_x( 'Add New', 'site' ); ?></a>
+	<a href="<?php echo network_admin_url('site-new.php'); ?>" class="add-new-h2"><?php echo esc_html_x( 'Add New', 'site' ); ?></a>
 <?php endif; ?>
 
 <?php if ( isset( $_REQUEST['s'] ) && $_REQUEST['s'] ) {
 	printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $s ) );
 } ?>
-</h1>
+</h2>
 
 <?php echo $msg; ?>
 

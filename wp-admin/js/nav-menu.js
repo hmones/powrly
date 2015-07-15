@@ -20,9 +20,7 @@ var wpNavMenu;
 
 		options : {
 			menuItemDepthPerLevel : 30, // Do not use directly. Use depthToPx and pxToDepth instead.
-			globalMaxDepth:  11,
-			sortableItems:   '> *',
-			targetTolerance: 0
+			globalMaxDepth : 11
 		},
 
 		menuList : undefined,	// Set in init.
@@ -89,10 +87,10 @@ var wpNavMenu;
 				childMenuItems : function() {
 					var result = $();
 					this.each(function(){
-						var t = $(this), depth = t.menuItemDepth(), next = t.next( '.menu-item' );
+						var t = $(this), depth = t.menuItemDepth(), next = t.next();
 						while( next.length && next.menuItemDepth() > depth ) {
 							result = result.add( next );
-							next = next.next( '.menu-item' );
+							next = next.next();
 						}
 					});
 					return result;
@@ -439,7 +437,7 @@ var wpNavMenu;
 				totalMenuItems = $('#menu-to-edit li').length,
 				hasSameDepthSibling = menuItem.nextAll( '.menu-item-depth-' + depth ).length;
 
-				menuItem.find( '.field-move' ).toggle( totalMenuItems > 1 );
+				menuItem.find( '.field-move' ).toggle( totalMenuItems > 1 ); 
 
 			// Where can they move this menu item?
 			if ( 0 !== position ) {
@@ -622,7 +620,6 @@ var wpNavMenu;
 			api.menuList.sortable({
 				handle: '.menu-item-handle',
 				placeholder: 'sortable-placeholder',
-				items: api.options.sortableItems,
 				start: function(e, ui) {
 					var height, width, parent, children, tempHolder;
 
@@ -663,7 +660,7 @@ var wpNavMenu;
 					ui.placeholder.width(width);
 
 					// Update the list of menu items.
-					tempHolder = ui.placeholder.next( '.menu-item' );
+					tempHolder = ui.placeholder.next();
 					tempHolder.css( 'margin-top', helperHeight + 'px' ); // Set the margin to absorb the placeholder
 					ui.placeholder.detach(); // detach or jQuery UI will think the placeholder is a menu item
 					$(this).sortable( 'refresh' ); // The children aren't sortable. We should let jQ UI know.
@@ -722,15 +719,11 @@ var wpNavMenu;
 					var offset = ui.helper.offset(),
 						edge = api.isRTL ? offset.left + ui.helper.width() : offset.left,
 						depth = api.negateIfRTL * api.pxToDepth( edge - menuEdge );
-
 					// Check and correct if depth is not within range.
 					// Also, if the dragged element is dragged upwards over
 					// an item, shift the placeholder to a child position.
-					if ( depth > maxDepth || offset.top < ( prevBottom - api.options.targetTolerance ) ) {
-						depth = maxDepth;
-					} else if ( depth < minDepth ) {
-						depth = minDepth;
-					}
+					if ( depth > maxDepth || offset.top < prevBottom ) depth = maxDepth;
+					else if ( depth < minDepth ) depth = minDepth;
 
 					if( depth != currentDepth )
 						updateCurrentDepth(ui, depth);
@@ -747,12 +740,12 @@ var wpNavMenu;
 			function updateSharedVars(ui) {
 				var depth;
 
-				prev = ui.placeholder.prev( '.menu-item' );
-				next = ui.placeholder.next( '.menu-item' );
+				prev = ui.placeholder.prev();
+				next = ui.placeholder.next();
 
 				// Make sure we don't select the moving item.
-				if( prev[0] == ui.item[0] ) prev = prev.prev( '.menu-item' );
-				if( next[0] == ui.item[0] ) next = next.next( '.menu-item' );
+				if( prev[0] == ui.item[0] ) prev = prev.prev();
+				if( next[0] == ui.item[0] ) next = next.next();
 
 				prevBottom = (prev.length) ? prev.offset().top + prev.height() : 0;
 				nextThreshold = (next.length) ? next.offset().top + next.height() / 3 : 0;
@@ -824,8 +817,6 @@ var wpNavMenu;
 				}
 			});
 			$('#add-custom-links input[type="text"]').keypress(function(e){
-				$('#customlinkdiv').removeClass('form-invalid');
-
 				if ( e.keyCode === 13 ) {
 					e.preventDefault();
 					$( '#submit-customlinkdiv' ).click();
@@ -928,10 +919,8 @@ var wpNavMenu;
 
 			processMethod = processMethod || api.addMenuItemToBottom;
 
-			if ( '' === url || 'http://' == url ) {
-				$('#customlinkdiv').addClass('form-invalid');
+			if ( '' === url || 'http://' == url )
 				return false;
-			}
 
 			// Show the ajax spinner
 			$( '.customlinkdiv .spinner' ).addClass( 'is-active' );

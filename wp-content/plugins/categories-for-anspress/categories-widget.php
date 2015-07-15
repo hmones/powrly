@@ -36,7 +36,7 @@ class AnsPress_Category_Widget extends WP_Widget {
 							<?php echo $category->name; ?>							
 						</a>
 						<div class="ap-cat-count">
-							<span><?php printf(_n('%d Question', '%d Questions', $category->count), $category->count); ?></span>
+							<span><?php printf(_n('%d Idea', '%d Ideas', $category->count), $category->count); ?></span>
 							<?php if($sub_cat_count > 0) : ?>
 								<span><?php printf(__('%d Child', 'ap'), $sub_cat_count); ?></span>
 							<?php endif; ?>

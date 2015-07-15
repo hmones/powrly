@@ -2,7 +2,6 @@
 tinymce.PluginManager.add( 'wpeditimage', function( editor ) {
 	var toolbar, serializer,
 		each = tinymce.each,
-		trim = tinymce.trim,
 		iOS = tinymce.Env.iOS;
 
 	function isPlaceholder( node ) {
@@ -96,7 +95,8 @@ tinymce.PluginManager.add( 'wpeditimage', function( editor ) {
 
 	function parseShortcode( content ) {
 		return content.replace( /(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g, function( a, b, c ) {
-			var id, align, classes, caption, img, width;
+			var id, align, classes, caption, img, width,
+				trim = tinymce.trim;
 
 			id = b.match( /id=['"]([^'"]*)['"] ?/ );
 			if ( id ) {
@@ -865,7 +865,7 @@ tinymce.PluginManager.add( 'wpeditimage', function( editor ) {
 				replacement = ' ' + align;
 			}
 
-			node.className = trim( node.className.replace( / ?align(left|center|right|none)/g, '' ) + replacement );
+			node.className = node.className.replace( / ?align(left|center|right|none)/g, '' ) + replacement;
 
 			editor.nodeChanged();
 			event.preventDefault();

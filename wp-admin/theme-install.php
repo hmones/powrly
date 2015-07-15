@@ -102,7 +102,7 @@ include(ABSPATH . 'wp-admin/admin-header.php');
 
 ?>
 <div class="wrap">
-	<h1><?php
+	<h2><?php
 	echo esc_html( $title );
 
 	/**
@@ -117,10 +117,10 @@ include(ABSPATH . 'wp-admin/admin-header.php');
 	 */
 	$tabs = apply_filters( 'install_themes_tabs', array( 'upload' => __( 'Upload Theme' ) ) );
 	if ( ! empty( $tabs['upload'] ) && current_user_can( 'upload_themes' ) ) {
-		echo ' <a href="#" class="upload page-title-action">' . __( 'Upload Theme' ) . '</a>';
-		echo ' <a href="#" class="browse-themes page-title-action">' . _x( 'Browse', 'themes' ) . '</a>';
+		echo ' <a href="#" class="upload add-new-h2">' . __( 'Upload Theme' ) . '</a>';
+		echo ' <a href="#" class="browse-themes add-new-h2">' . _x( 'Browse', 'themes' ) . '</a>';
 	}
-	?></h1>
+	?></h2>
 
 	<div class="upload-theme">
 	<?php install_themes_upload(); ?>
@@ -237,12 +237,16 @@ if ( $tab ) {
 
 				<div class="theme-details">
 					<# if ( data.rating ) { #>
-						<div class="star-rating rating-{{ Math.round( data.rating / 10 ) * 10 }}">
-							<span class="one"></span><span class="two"></span><span class="three"></span><span class="four"></span><span class="five"></span>
+						<div class="rating rating-{{ Math.round( data.rating / 10 ) * 10 }}">
+							<span class="one"></span>
+							<span class="two"></span>
+							<span class="three"></span>
+							<span class="four"></span>
+							<span class="five"></span>
 							<small class="ratings">{{ data.num_ratings }}</small>
 						</div>
 					<# } else { #>
-						<div class="star-rating">
+						<div class="rating">
 							<small class="ratings"><?php _e( 'This theme has not been rated yet.' ); ?></small>
 						</div>
 					<# } #>

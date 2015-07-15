@@ -1,5 +1,5 @@
 /* global postL10n, ajaxurl, wpAjax, setPostThumbnailL10n, postboxes, pagenow, tinymce, alert, deleteUserSetting */
-/* global theList:true, theExtraList:true, getUserSetting, setUserSetting, commentReply */
+/* global theList:true, theExtraList:true, getUserSetting, setUserSetting */
 
 var commentsBox, WPSetThumbnailHTML, WPSetThumbnailID, WPRemoveThumbnail, wptitlehint, makeSlugeditClickable, editPermalink;
 // Back-compat: prevent fatal errors
@@ -203,7 +203,8 @@ $(document).on( 'heartbeat-send.refresh-lock', function( e, data ) {
 jQuery(document).ready( function($) {
 	var stamp, visibility, $submitButtons, updateVisibility, updateText,
 		sticky = '',
-		$textarea = $('#content'),
+		last = 0,
+		co = $('#content'),
 		$document = $(document),
 		$editSlugWrap = $('#edit-slug-box'),
 		postId = $('#post_ID').val() || 0,
@@ -211,8 +212,7 @@ jQuery(document).ready( function($) {
 		releaseLock = true,
 		$postVisibilitySelect = $('#post-visibility-select'),
 		$timestampdiv = $('#timestampdiv'),
-		$postStatusSelect = $('#post-status-select'),
-		isMac = window.navigator.platform ? window.navigator.platform.indexOf( 'Mac' ) !== -1 : false;
+		$postStatusSelect = $('#post-status-select');
 
 	postboxes.add_postbox_toggles(pagenow);
 
@@ -266,14 +266,6 @@ jQuery(document).ready( function($) {
 				wp.autosave.server.suspend();
 			}
 
-			if ( typeof commentReply !== 'undefined' ) {
-				/*
-				 * Close the comment edit/reply form if open to stop the form
-				 * action from interfering with the post's form action.
-				 */
-				commentReply.close();
-			}
-
 			releaseLock = false;
 			$(window).off( 'beforeunload.edit-post' );
 
@@ -321,10 +313,11 @@ jQuery(document).ready( function($) {
 
 	// This code is meant to allow tabbing from Title to Post content.
 	$('#title').on( 'keydown.editor-focus', function( event ) {
-		var editor;
+		var editor, $textarea;
 
 		if ( event.keyCode === 9 && ! event.ctrlKey && ! event.altKey && ! event.shiftKey ) {
 			editor = typeof tinymce != 'undefined' && tinymce.get('content');
+			$textarea = $('#content');
 
 			if ( editor && ! editor.isHidden() ) {
 				editor.focus();
@@ -795,6 +788,24 @@ jQuery(document).ready( function($) {
 		});
 	}
 
+	// word count
+	if ( typeof(wpWordCount) != 'undefined' ) {
+		$document.triggerHandler('wpcountwords', [ co.val() ]);
+
+		co.keyup( function(e) {
+			var k = e.keyCode || e.charCode;
+
+			if ( k == last )
+				return true;
+
+			if ( 13 == k || 8 == last || 46 == last )
+				$document.triggerHandler('wpcountwords', [ co.val() ]);
+
+			last = k;
+			return true;
+		});
+	}
+
 	wptitlehint = function(id) {
 		id = id || 'title';
 
@@ -824,6 +835,7 @@ jQuery(document).ready( function($) {
 	// Resize the visual and text editors
 	( function() {
 		var editor, offset, mce,
+			$textarea = $('textarea#content'),
 			$handle = $('#post-status-info'),
 			$postdivrich = $('#postdivrich');
 
@@ -911,57 +923,4 @@ jQuery(document).ready( function($) {
 			}
 		});
 	}
-
-	// Save on pressing Ctrl/Command + S in the Text editor
-	$textarea.on( 'keydown.wp-autosave', function( event ) {
-		if ( event.which === 83 ) {
-			if ( event.shiftKey || event.altKey || ( isMac && ( ! event.metaKey || event.ctrlKey ) ) || ( ! isMac && ! event.ctrlKey ) ) {
-				return;
-			}
-
-			wp.autosave && wp.autosave.server.triggerSave();
-			event.preventDefault();
-		}
-	});
 });
-
-( function( $, counter ) {
-	$( function() {
-		var $content = $( '#content' ),
-			$count = $( '#wp-word-count' ).find( '.word-count' ),
-			prevCount = 0,
-			contentEditor;
-
-		function update() {
-			var text, count;
-
-			if ( ! contentEditor || contentEditor.isHidden() ) {
-				text = $content.val();
-			} else {
-				text = contentEditor.getContent( { format: 'raw' } );
-			}
-
-			count = counter.count( text );
-
-			if ( count !== prevCount ) {
-				$count.text( count );
-			}
-
-			prevCount = count;
-		}
-
-		$( document ).on( 'tinymce-editor-init', function( event, editor ) {
-			if ( editor.id !== 'content' ) {
-				return;
-			}
-
-			contentEditor = editor;
-
-			editor.on( 'nodechange keyup', _.debounce( update, 1000 ) );
-		} );
-
-		$content.on( 'input keyup', _.debounce( update, 1000 ) );
-
-		update();
-	} );
-} )( jQuery, new wp.utils.WordCounter() );

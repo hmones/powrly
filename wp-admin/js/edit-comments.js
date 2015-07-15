@@ -313,9 +313,8 @@ commentReply = {
 	},
 
 	toggle : function(el) {
-		if ( 'none' !== $( el ).css( 'display' ) && ( $( '#replyrow' ).parent().is('#com-reply') || window.confirm( adminCommentsL10n.warnQuickEdit ) ) ) {
-			$( el ).find( 'a.vim-q' ).click();
-		}
+		if ( $(el).css('display') != 'none' )
+			$(el).find('a.vim-q').click();
 	},
 
 	revert : function() {
@@ -398,7 +397,7 @@ commentReply = {
 			});
 		} else if ( action == 'add' ) {
 			$('#addhead, #addbtn', editRow).show();
-			$('#replyhead, #replybtn, #edithead, #savebtn', editRow).hide();
+			$('#replyhead, #replybtn, #edithead, #editbtn', editRow).hide();
 			$('#the-comment-list').prepend(editRow);
 			$('#replyrow').fadeIn(300);
 		} else {

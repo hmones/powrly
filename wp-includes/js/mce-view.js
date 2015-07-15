@@ -93,7 +93,8 @@ window.wp = window.wp || {};
 		setMarkers: function( content ) {
 			var pieces = [ { content: content } ],
 				self = this,
-				instance, current;
+				instance,
+				current;
 
 			_.each( views, function( view, type ) {
 				current = pieces.slice();
@@ -101,7 +102,7 @@ window.wp = window.wp || {};
 
 				_.each( current, function( piece ) {
 					var remaining = piece.content,
-						result, text;
+						result;
 
 					// Ignore processed pieces, but retain their location.
 					if ( piece.processed ) {
@@ -118,11 +119,10 @@ window.wp = window.wp || {};
 						}
 
 						instance = self.createInstance( type, result.content, result.options );
-						text = instance.loader ? '.' : instance.text;
 
 						// Add the processed piece for the match.
 						pieces.push( {
-							content: '<p data-wpview-marker="' + instance.encodedText + '">' + text + '</p>',
+							content: '<p data-wpview-marker="' + instance.encodedText + '">' + instance.text + '</p>',
 							processed: true
 						} );
 
@@ -138,8 +138,7 @@ window.wp = window.wp || {};
 				} );
 			} );
 
-			content = _.pluck( pieces, 'content' ).join( '' );
-			return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
+			return _.pluck( pieces, 'content' ).join( '' );
 		},
 
 		/**
@@ -156,14 +155,13 @@ window.wp = window.wp || {};
 				encodedText,
 				instance;
 
-			text = tinymce.DOM.decode( text );
-			instance = this.getInstance( text );
+			text = tinymce.DOM.decode( text ),
+			encodedText = encodeURIComponent( text ),
+			instance = this.getInstance( encodedText );
 
 			if ( instance ) {
 				return instance;
 			}
-
-			encodedText = encodeURIComponent( text );
 
 			options = _.extend( options || {}, {
 				text: text,
@@ -418,7 +416,7 @@ window.wp = window.wp || {};
 		 */
 		replaceMarkers: function() {
 			this.getMarkers( function( editor, node ) {
-				if ( ! this.loader && $( node ).text() !== this.text ) {
+				if ( $( node ).text() !== this.text ) {
 					editor.dom.setAttrib( node, 'data-wpview-marker', null );
 					return;
 				}
@@ -501,17 +499,10 @@ window.wp = window.wp || {};
 					}
 				} );
 
-				if ( self.iframeHeight ) {
-					dom.add( contentNode, 'div', { style: {
-						width: '100%',
-						height: self.iframeHeight
-					} } );
-				}
-
 				// Seems the browsers need a bit of time to insert/set the view nodes,
 				// or the iframe will fail especially when switching Text => Visual.
 				setTimeout( function() {
-					var iframe, iframeDoc, observer, i, block;
+					var iframe, iframeDoc, observer, i;
 
 					contentNode.innerHTML = '';
 
@@ -525,8 +516,7 @@ window.wp = window.wp || {};
 						style: {
 							width: '100%',
 							display: 'block'
-						},
-						height: self.iframeHeight
+						}
 					} );
 
 					dom.add( contentNode, 'div', { 'class': 'wpview-overlay' } );
@@ -569,31 +559,18 @@ window.wp = window.wp || {};
 					iframeDoc.close();
 
 					function resize() {
-						var $iframe;
-
-						if ( block ) {
-							return;
-						}
+						var $iframe, iframeDocHeight;
 
 						// Make sure the iframe still exists.
 						if ( iframe.contentWindow ) {
 							$iframe = $( iframe );
-							self.iframeHeight = $( iframeDoc.body ).height();
+							iframeDocHeight = $( iframeDoc.body ).height();
 
-							if ( $iframe.height() !== self.iframeHeight ) {
-								$iframe.height( self.iframeHeight );
+							if ( $iframe.height() !== iframeDocHeight ) {
+								$iframe.height( iframeDocHeight );
 								editor.nodeChanged();
 							}
 						}
-					}
-
-					if ( self.iframeHeight ) {
-						block = true;
-
-						setTimeout( function() {
-							block = false;
-							resize();
-						}, 3000 );
 					}
 
 					$( iframe.contentWindow ).on( 'load', resize );

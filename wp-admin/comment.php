@@ -12,9 +12,6 @@ require_once( dirname( __FILE__ ) . '/admin.php' );
 $parent_file = 'edit-comments.php';
 $submenu_file = 'edit-comments.php';
 
-/**
- * @global string $action
- */
 global $action;
 wp_reset_vars( array('action') );
 
@@ -117,7 +114,7 @@ case 'spam'    :
 ?>
 <div class="wrap">
 
-<h1><?php echo esc_html( $title ); ?></h1>
+<h2><?php echo esc_html( $title ); ?></h2>
 
 <?php
 switch ( $action ) {

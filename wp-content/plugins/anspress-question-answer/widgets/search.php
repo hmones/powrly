@@ -32,7 +32,7 @@ class AP_Search_Widget extends WP_Widget {
 		?>
 			<form id="ap-search-form" class="ap-search-form" action="<?php echo ap_get_link_to('search'); ?>" method="GET">
 				<div class="ap-qaf-inner">
-					<input class="form-control" type="text" name="ap_s" id="ap-quick-ask-input" placeholder="<?php _e('Search questions & answers', 'ap'); ?>" value="<?php echo sanitize_text_field(get_query_var('ap_s')); ?>" autocomplete="off" />
+					<input class="form-control" type="text" name="ap_s" id="ap-quick-ask-input" placeholder="<?php _e('Search for ideas & discussions', 'ap'); ?>" value="<?php echo sanitize_text_field(get_query_var('ap_s')); ?>" autocomplete="off" />
 					<button type="submit" ><?php _e('Search', 'ap'); ?></button>
 				</div>
 			</form>
@@ -45,7 +45,7 @@ class AP_Search_Widget extends WP_Widget {
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( 'Search questions', 'ap' );
+			$title = __( 'Search ideas', 'ap' );
 		}
 		?>
 		<p>

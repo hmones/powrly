@@ -70,7 +70,7 @@ if ( $action ) {
 				$password = wp_generate_password( 12, false);
 				$user_id = wpmu_create_user( esc_html( strtolower( $user['username'] ) ), $password, esc_html( $user['email'] ) );
 
-				if ( false === $user_id ) {
+				if ( false == $user_id ) {
 		 			$update = 'err_new_dup';
 				} else {
 					wp_new_user_notification( $user_id, $password );
@@ -182,7 +182,7 @@ var current_site_id = <?php echo $id; ?>;
 
 
 <div class="wrap">
-<h1 id="edit-site"><?php echo $title_site_url_linked; ?></h1>
+<h2 id="edit-site"><?php echo $title_site_url_linked ?></h2>
 <h3 class="nav-tab-wrapper">
 <?php
 $tabs = array(
